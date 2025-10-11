@@ -1,9 +1,10 @@
-
-using KA_11.BLL.Services;
+using KA_11.BLL.Services.Classes;
+using KA_11.BLL.Services.Interfaces;
 using KA_11.DAL.Data;
-using KA_11.DAL.Repositories;
+using KA_11.DAL.Repositories.Classes;
+using KA_11.DAL.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-
+using Scalar.AspNetCore;
 namespace KA_11.PL
 {
     public class Program
@@ -28,6 +29,8 @@ namespace KA_11.PL
             if (app.Environment.IsDevelopment())  
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference();
+
             }
 
             app.UseHttpsRedirection();

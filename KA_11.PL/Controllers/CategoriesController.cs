@@ -1,5 +1,5 @@
 ﻿using Azure.Core;
-using KA_11.BLL.Services;
+using KA_11.BLL.Services.Interfaces;
 using KA_11.DAL.DTO.Requests;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +10,15 @@ namespace KA_11.PL.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
+        private readonly ICategoryService _categoryService;
 
-                private readonly ICategoryService _categoryService;
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
         }
 
         [HttpGet("")]
-        public IActionResult GetAllCategories()
+        public IActionResult GetAllCategories() 
         {
             return Ok(_categoryService.GetAllCategories());
         }

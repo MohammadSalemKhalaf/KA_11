@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KA_11.BLL.Services
+namespace KA_11.BLL.Services.Interfaces
 {
     public interface ICategoryService
     {
