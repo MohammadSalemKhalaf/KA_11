@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace KA_11.BLL.Services.Classes
 {
-    public class CategoryService : GenericService<CategoryRequest, CategoryResponse, Category>, ICategoryService
+    public class BrandService : GenericService<BrandRequest, BrandResponse, Brand>, IBrandService
     {
-        public CategoryService(ICategoryRepository categoryRepository) :base(categoryRepository)
+        public BrandService(IBrandRepository BrandRepository) :base(BrandRepository)
         {
         }
     }

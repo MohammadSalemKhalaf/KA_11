@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using KA_11.DAL.Models;
 namespace KA_11.BLL.Services.Interfaces
 {
-    public interface ICategoryService : IGenericService<CategoryRequest, CategoryResponse,Category>
+    public interface IBrandService : IGenericService<BrandRequest, BrandResponse,Brand>
     {
     }
     }

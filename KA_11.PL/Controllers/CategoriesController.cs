@@ -18,27 +18,27 @@ namespace KA_11.PL.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult GetAllCategories() 
+        public IActionResult GetAllCategories()
         {
-            return Ok(_categoryService.GetAllCategories());
+            return Ok(_categoryService.GetAll());
         }
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute]int id)
+        public IActionResult GetById([FromRoute] int id)
         {
-            var category= _categoryService.GetCategoryById(id);
-            if(category is null) return NotFound();
+            var category = _categoryService.GetById(id);
+            if (category is null) return NotFound();
             return Ok(category);
         }
         [HttpPost]
-        public IActionResult Create([FromBody]CategoryRequest request)
+        public IActionResult Create([FromBody] CategoryRequest request)
         {
-            var id = _categoryService.CreateCategory(request);
-           return CreatedAtAction(nameof(GetById),new {id});
+            var id = _categoryService.Create(request);
+            return CreatedAtAction(nameof(GetById), new { id });
         }
         [HttpPatch("{id}")]
-        public IActionResult Update( [FromRoute] int id , [FromBody] CategoryRequest request)
+        public IActionResult Update([FromRoute] int id, [FromBody] CategoryRequest request)
         {
-            var rows = _categoryService.UpdateCategory(id, request);
+            var rows = _categoryService.Update(id, request);
             if (rows == 0) return NotFound();
             return Ok();
         }
@@ -46,14 +46,14 @@ namespace KA_11.PL.Controllers
         public IActionResult ToggleStatus([FromRoute] int id)
         {
             var response = _categoryService.ToggleStatus(id);
-            return response ? Ok(new {message="Status Toggled"}) : NotFound(new {message="Category not found"});
+            return response ? Ok(new { message = "Status Toggled" }) : NotFound(new { message = "Category not found" });
         }
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var rows = _categoryService.DeleteCategory(id);
+            var rows = _categoryService.Delete(id);
             if (rows == 0) return NotFound();
-            return Ok(new {message="Category was deleted succesfully"});
+            return Ok(new { message = "Category was deleted succesfully" });
         }
     }
 }
