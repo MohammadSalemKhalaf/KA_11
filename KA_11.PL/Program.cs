@@ -1,15 +1,18 @@
 using KA_11.BLL.Services.Classes;
 using KA_11.BLL.Services.Interfaces;
 using KA_11.DAL.Data;
+using KA_11.DAL.Models;
 using KA_11.DAL.Repositories.Classes;
 using KA_11.DAL.Repositories.Interfaces;
+using KA_11.DAL.Utils;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 namespace KA_11.PL
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,11 @@ namespace KA_11.PL
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
+            builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
 
             var app = builder.Build();
 
@@ -34,6 +42,13 @@ namespace KA_11.PL
                 app.MapScalarApiReference();
 
             }
+
+            //jusr run one time at the application start
+            var scope = app.Services.CreateScope();
+            var objectOfSeedData =   scope.ServiceProvider.GetRequiredService<ISeedData>();
+            await objectOfSeedData.DataSeedingAsync();
+            await objectOfSeedData.IdentityDataSeedingAsync();
+            //
 
             app.UseHttpsRedirection();
 
