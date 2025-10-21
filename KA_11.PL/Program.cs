@@ -5,9 +5,12 @@ using KA_11.DAL.Models;
 using KA_11.DAL.Repositories.Classes;
 using KA_11.DAL.Repositories.Interfaces;
 using KA_11.DAL.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using AuthenticationService = KA_11.BLL.Services.Classes.AuthenticationService;
+using IAuthenticationService = KA_11.BLL.Services.Interfaces.IAuthenticationService;
 namespace KA_11.PL
 {
     public class Program
@@ -28,6 +31,7 @@ namespace KA_11.PL
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
