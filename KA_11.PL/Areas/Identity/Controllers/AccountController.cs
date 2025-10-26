@@ -2,6 +2,7 @@
 using KA_11.DAL.DTO.Requests;
 using KA_11.DAL.DTO.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KA_11.PL.Areas.Identity.Controllers
@@ -28,6 +29,12 @@ namespace KA_11.PL.Areas.Identity.Controllers
         {
             var userResponse = await _authenticationService.LoginAsync(loginRequest);
             return Ok(userResponse);
+        }
+        [HttpGet("ConfirmEmail")]
+        public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string token, [FromQuery] string userId)
+        {
+            var result = await _authenticationService.ConfirmEmailAsync(userId, token);
+            return Ok(result);
         }
     }
 }

@@ -12,5 +12,6 @@ namespace KA_11.BLL.Services.Interfaces
     {
          Task<UserResponse> LoginAsync(LoginRequest loginRequest);
          Task<UserResponse> RegisterAsync(RegisterRequest registerRequest);
+        Task<string> ConfirmEmailAsync(string userId, string token);
     }
 }

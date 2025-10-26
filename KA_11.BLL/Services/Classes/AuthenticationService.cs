@@ -3,6 +3,7 @@ using KA_11.DAL.DTO.Requests;
 using KA_11.DAL.DTO.Responses;
 using KA_11.DAL.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -19,11 +20,17 @@ namespace KA_11.BLL.Services.Classes
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSender _emailSender;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager ,IConfiguration configuration )
+        public AuthenticationService(
+            UserManager<ApplicationUser> userManager ,
+            IConfiguration configuration,
+            IEmailSender emailSender
+            )
         {
             _userManager = userManager;
             _configuration = configuration;
+            _emailSender = emailSender;
         }
         public async Task<UserResponse> LoginAsync(LoginRequest loginRequest)
         {
@@ -31,6 +38,10 @@ namespace KA_11.BLL.Services.Classes
             if (user == null)
             {
                 throw new Exception("Invalid Email or Password");
+            }
+            if(!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                throw new Exception("Email not confirmed");
             }
             var isPassValid = await _userManager.CheckPasswordAsync(user, loginRequest.Password);
             if (!isPassValid)
@@ -41,6 +52,23 @@ namespace KA_11.BLL.Services.Classes
             {
                 Token = await CreateTokenAsync(user),
             };
+        }
+        public async Task<string> ConfirmEmailAsync(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found ");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                return "Email confirmed successfully";
+            }
+            else
+            {
+                throw new Exception("Email confirmation failed");
+            }
         }
 
         public async Task<UserResponse> RegisterAsync(RegisterRequest registerRequest)
@@ -55,6 +83,11 @@ namespace KA_11.BLL.Services.Classes
             var Result = await _userManager.CreateAsync(user, registerRequest.Password);
             if (Result.Succeeded)
             {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var escapToken = Uri.EscapeDataString(token);
+                var emailConfirmationLink = $"https://localhost:7174/api/Identity/Account/ConfirmEmail?token={escapToken}&userId={user.Id}";
+                _emailSender.SendEmailAsync(user.Email, "Confirm your email",
+                    $"<h1>Hello {registerRequest.FullName}</h1><br>Please confirm your account by clicking this link: <a href='{emailConfirmationLink}'>Click here</a>");
                 return new UserResponse()
                 {
                     Token = registerRequest.Email
@@ -62,7 +95,8 @@ namespace KA_11.BLL.Services.Classes
             }
             else
             {
-                throw new Exception($"{Result.Errors}");
+                var errors = string.Join(", ", Result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new Exception(errors);
             }
         }
         private async Task<string> CreateTokenAsync(ApplicationUser user)
@@ -77,7 +111,7 @@ namespace KA_11.BLL.Services.Classes
             var Roles = await _userManager.GetRolesAsync(user);
             foreach (var role in Roles)
             {
-                Claims.Add(new Claim(ClaimTypes.Role, role)); // ← THIS IS THE FIX
+                Claims.Add(new Claim(ClaimTypes.Role, role)); 
             }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("Jwt")["Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -71,6 +71,7 @@ namespace KA_11.DAL.Utils
                     FullName = "Mohammad Khalaf",
                     PhoneNumber = "0569581366",
                     UserName = "mbaboshi",
+                    EmailConfirmed = true,
                 };
 
                 var user2 = new ApplicationUser()
@@ -79,6 +80,7 @@ namespace KA_11.DAL.Utils
                     FullName = "Baraa Khalaf",
                     PhoneNumber = "0569581344",
                     UserName = "bbaboshi",
+                    EmailConfirmed = true,
                 };
 
                 var user3 = new ApplicationUser()
@@ -87,6 +89,7 @@ namespace KA_11.DAL.Utils
                     FullName = "Ahmad Khalaf",
                     PhoneNumber = "0569581355",
                     UserName = "ababoshi",
+                    EmailConfirmed = true,
                 };
 
                 await _userManager.CreateAsync(user1, "Password@123"); 
