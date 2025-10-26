@@ -8,6 +8,6 @@ namespace KA_11.DAL.DTO.Responses
 {
     public class UserResponse
     {
-        public string Email { get; set; }
+        public string Token { get; set; }
     }
 }

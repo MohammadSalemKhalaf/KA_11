@@ -38,8 +38,13 @@ namespace KA_11.BLL.Services.Classes
             return _repository.Remove(entity);
         }
 
-        public IEnumerable<TResponse> GetAll()
+        public IEnumerable<TResponse> GetAll(bool onlyActive = false)
         {
+            if(onlyActive)
+            {
+                var activeEntities = _repository.GetAll().Where(e => e.status == Status.Active);
+                return activeEntities.Adapt<IEnumerable<TResponse>>();
+            }
             var entities = _repository.GetAll();
             return entities.Adapt<IEnumerable<TResponse>>();
         }
