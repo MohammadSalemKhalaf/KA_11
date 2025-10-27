@@ -123,6 +123,48 @@ namespace KA_11.BLL.Services.Classes
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public async Task<string> ForgotPasswordAsync(ForgotPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            var random = new Random();
+            var code = random.Next(100000, 999999).ToString();
+            user.CodeResetPassword = code;
+            user.PasswordResetCodeExpiry = DateTime.UtcNow.AddMinutes(15);
+            await _userManager.UpdateAsync(user);
+            await _emailSender.SendEmailAsync(user.Email, "Password Reset Code",
+                $"<h1>Password Reset Code</h1><br>Your password reset code is: <strong>{code}</strong><br>This code will expire in 15 minutes.");
+
+            return "check your email for the reset code";
+        }
+        public async Task<bool> ResetPasswordAsync(ResetPassword request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+            if (user.CodeResetPassword != request.code || user.PasswordResetCodeExpiry < DateTime.UtcNow)
+            {
+                throw new Exception("Invalid or expired reset code");
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, request.newPassword);
+            if (result.Succeeded)
+            {
+                await _emailSender.SendEmailAsync(user.Email, "Password Reset Successful",
+                    $"<h1>Password Reset Successful</h1><br>Your password has been reset successfully.");
+            }
+            else
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                throw new Exception(errors);
+            }
+            return true;
+        }
     } 
 }
 

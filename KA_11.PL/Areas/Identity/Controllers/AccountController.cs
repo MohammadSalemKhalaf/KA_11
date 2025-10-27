@@ -36,5 +36,17 @@ namespace KA_11.PL.Areas.Identity.Controllers
             var result = await _authenticationService.ConfirmEmailAsync(userId, token);
             return Ok(result);
         }
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<string>> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            var result = await _authenticationService.ForgotPasswordAsync(request);
+            return Ok(result);
+        }
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<string>> ResetPassword([FromBody] ResetPassword request)
+        {
+            var result = await _authenticationService.ResetPasswordAsync(request);
+            return Ok(result);
+        }
     }
 }
