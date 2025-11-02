@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using System.Security.Claims;
 using System.Text;
 using AuthenticationService = KA_11.BLL.Services.Classes.AuthenticationService;
 using IAuthenticationService = KA_11.BLL.Services.Interfaces.IAuthenticationService;
@@ -34,12 +35,25 @@ namespace KA_11.PL
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredLength = 6;
+                options.User.RequireUniqueEmail = true; //prevent to register with same email
+                options.SignIn.RequireConfirmedEmail = true;
+            }
+            )
                 .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 
             //Add JWT Authentication
@@ -61,8 +75,8 @@ namespace KA_11.PL
                               Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
 
                                 ),
-                            RoleClaimType = "Role",  
-                            NameClaimType = "Name"
+                            RoleClaimType = ClaimTypes.Role,  
+                            NameClaimType = ClaimTypes.Name
                         };
 
                     });
@@ -87,8 +101,10 @@ namespace KA_11.PL
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();  
             app.UseAuthorization();
 
+            app.UseStaticFiles();
 
             app.MapControllers();
 

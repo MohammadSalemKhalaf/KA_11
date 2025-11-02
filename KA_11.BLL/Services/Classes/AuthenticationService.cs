@@ -117,7 +117,7 @@ namespace KA_11.BLL.Services.Classes
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 claims: Claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddYears(2),
                 signingCredentials: credentials 
             );
 
