@@ -36,8 +36,10 @@ namespace KA_11.PL
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             builder.Services.AddScoped<ISeedData, SeedData>();
             builder.Services.AddScoped<IFileService, FileService>();

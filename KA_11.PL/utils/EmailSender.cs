@@ -12,7 +12,7 @@ namespace KA_11.PL.utils
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("mohammadkhalaf3hfg@gmail.com", "sjhn tkow ofnd tcrv\r\n")
+                Credentials = new NetworkCredential("mohammadkhalaf3hfg@gmail.com", "edkh klmj ljel bdly\r\n")
             };
 
             return client.SendMailAsync(
